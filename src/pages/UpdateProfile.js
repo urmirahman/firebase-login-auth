@@ -5,34 +5,48 @@ import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import { useAuth } from "../components/context/AuthContext";
 import { Link, useHistory } from "react-router-dom";
-export const Login = () => {
+
+export const UpdateProfile = () => {
   const emailRef = useRef();
   const passwordRef = useRef();
-
-  const history = useHistory();
+  const confirmPasswordRef = useRef();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const history = useHistory();
 
-  async function handleSubmit(e) {
+  const { currentUser, updateMail, updatePass } = useAuth();
+
+  function handleSubmit(e) {
     e.preventDefault();
-
-    try {
-      setError("");
-      setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
-      history.push("/");
-    } catch {
-      setError("Failed to signin");
+    const promises = [];
+    setError("");
+    setLoading(true);
+    if (emailRef.current.value !== currentUser.email) {
+      promises.push(updateMail(emailRef.current.value));
     }
-    setLoading(false);
+    if (passwordRef.current.value) {
+      promises.push(updatePass(passwordRef.current.value));
+    }
+
+    Promise.all(promises)
+      .then(() => {
+        history.push("/");
+      })
+      .catch(() => {
+        setError("Failed to update");
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   }
 
   return (
     <Container className=" d-flex justify-content-center align-items-center min-vh-100">
       <div className="signup w-100 border rounded p-3">
-        <p className="fs-1 text-center fw-bold text-dark pb-5">Login</p>
+        <p className="fs-1 text-center fw-bold text-dark pb-5">
+          Update Profile
+        </p>
         {error && <Alert variant="danger">{error}</Alert>}
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="email">
@@ -42,6 +56,7 @@ export const Login = () => {
               placeholder="Enter email"
               ref={emailRef}
               required
+              defaultValue={currentUser.email}
             />
             <Form.Text className="text-muted">
               We'll never share your email with anyone else.
@@ -52,12 +67,18 @@ export const Login = () => {
             <Form.Label>Password</Form.Label>
             <Form.Control
               type="password"
-              placeholder="Password"
+              placeholder="Please leave blank to remain same password"
               ref={passwordRef}
-              required
             />
           </Form.Group>
-
+          <Form.Group className="mb-3" controlId="Confirm-password">
+            <Form.Label>Confirm Password</Form.Label>
+            <Form.Control
+              type="password"
+              placeholder="Please leave blank to remain same password"
+              ref={confirmPasswordRef}
+            />
+          </Form.Group>
           <div>
             <Button
               disable={` ${loading}`}
@@ -66,19 +87,14 @@ export const Login = () => {
               type="submit"
               className="w-100"
             >
-              Login
+              Update
             </Button>
           </div>
         </Form>
-        <p className="text-center  fs-5 py-2">
-          <Link to="/forgotpass" className="text-decoration-none">
-            Forgot Password
-          </Link>
-        </p>
         <p className="text-center ">
           {" "}
-          <Link to="/signup" className="text-decoration-none">
-            Don't have an account? Signup.
+          <Link to="/" className="text-decoration-none">
+            Cancel
           </Link>
         </p>
       </div>

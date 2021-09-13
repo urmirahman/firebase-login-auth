@@ -1,10 +1,9 @@
-import { SignUp } from "./pages/SignUp";
 import { AuthProvider } from "./components/context/AuthContext";
 import { Router } from "./components/router/Router";
 function App() {
   return (
     <AuthProvider>
-     <Router/>
+      <Router />
     </AuthProvider>
   );
 }

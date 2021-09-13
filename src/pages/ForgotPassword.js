@@ -4,27 +4,30 @@ import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Alert from "react-bootstrap/Alert";
 import { useAuth } from "../components/context/AuthContext";
-import { Link, useHistory } from "react-router-dom";
-export const Login = () => {
+import { Link } from "react-router-dom";
+export const ForgotPassword = () => {
   const emailRef = useRef();
-  const passwordRef = useRef();
 
-  const history = useHistory();
+
+ 
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { resetPass} = useAuth();
 
   async function handleSubmit(e) {
     e.preventDefault();
 
     try {
+        setMessage("")
       setError("");
       setLoading(true);
-      await login(emailRef.current.value, passwordRef.current.value);
-      history.push("/");
+      await resetPass(emailRef.current.value);
+      setMessage("Please check your inbox for more instruction")
+      
     } catch {
-      setError("Failed to signin");
+      setError("Failed to reset Password");
     }
     setLoading(false);
   }
@@ -32,8 +35,9 @@ export const Login = () => {
   return (
     <Container className=" d-flex justify-content-center align-items-center min-vh-100">
       <div className="signup w-100 border rounded p-3">
-        <p className="fs-1 text-center fw-bold text-dark pb-5">Login</p>
+        <p className="fs-1 text-center fw-bold text-dark pb-5">Password Reset</p>
         {error && <Alert variant="danger">{error}</Alert>}
+        {message && <Alert variant="info">{message}</Alert>}
         <Form onSubmit={handleSubmit}>
           <Form.Group className="mb-3" controlId="email">
             <Form.Label>Email address</Form.Label>
@@ -43,20 +47,9 @@ export const Login = () => {
               ref={emailRef}
               required
             />
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-            </Form.Text>
           </Form.Group>
 
-          <Form.Group className="mb-3" controlId="password">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              ref={passwordRef}
-              required
-            />
-          </Form.Group>
+          
 
           <div>
             <Button
@@ -66,15 +59,10 @@ export const Login = () => {
               type="submit"
               className="w-100"
             >
-              Login
+              Reset Password
             </Button>
           </div>
         </Form>
-        <p className="text-center  fs-5 py-2">
-          <Link to="/forgotpass" className="text-decoration-none">
-            Forgot Password
-          </Link>
-        </p>
         <p className="text-center ">
           {" "}
           <Link to="/signup" className="text-decoration-none">

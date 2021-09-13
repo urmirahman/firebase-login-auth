@@ -1,18 +1,15 @@
-import React, { useRef, useState } from "react";
+import React, { useState } from "react";
 import Container from "react-bootstrap/Container";
-import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import Alert from "react-bootstrap/Alert";
 import { useAuth } from "../components/context/AuthContext";
-import { Link, useHistory } from "react-router-dom";
+import { Link,useHistory } from "react-router-dom";
 export const Dashboard = () => {
-  const emailRef = useRef();
-  const passwordRef = useRef();
+ 
 
   const history = useHistory();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
 
   const { currentUser, logout } = useAuth();
 
@@ -41,9 +38,9 @@ export const Dashboard = () => {
               With supporting text below as a natural lead-in to additional
               content.
             </Card.Text>
-            <Button onClick={handleLogout} variant="success">
+            <Link to="/updateprofile"className="btn btn-success">
               Update Profile
-            </Button>
+            </Link>
           </Card.Body>
           <Card.Footer className="text-muted">
             <Button onClick={handleLogout} variant="primary">
